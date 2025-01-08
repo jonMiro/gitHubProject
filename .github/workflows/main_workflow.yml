@@ -84,3 +84,17 @@ jobs:
           git add README.md
           git commit -m "Add Cypress test badge"
           git push
+  Deploy_job:
+    runs-on: ubuntu-latest
+    needs: Cypress_job  # Este job se ejecutará después del Cypress_job
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # Realiza el checkout del código fuente
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v20  # Acción para desplegar el proyecto en Vercel
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}  # Token de autenticación de Vercel
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}  # ID de la organización en Vercel (si aplica)
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}  # ID del proyecto en Vercel
+          vercel-args: '--prod'  # Desplegar en producción (puedes cambiarlo a '--preview' si prefieres)
