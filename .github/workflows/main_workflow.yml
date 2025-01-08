@@ -66,17 +66,6 @@ jobs:
           result=$(cat results.txt)
           echo "cypress_outcome=${result}" >> $GITHUB_ENV  # Guardamos el resultado como una variable de entorno
 
-      - name: Add badge to README
-        run: |
-          if [[ "${{ env.cypress_outcome }}" == *"failure"* ]]; then
-            badge="![Test Failure](https://img.shields.io/badge/test-failure-red)"
-          else
-            badge="![Tested with Cypress](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)"
-          fi
-          
-          # Añadir el badge al final del README.md después del texto "RESULTAT DELS ÚLTIMS TESTS"
-          sed -i '/RESULTAT DELS ÚLTIMS TESTS/a\'"$badge" README.md
-
       - name: Commit changes to README
         run: |
           git config --global user.name "GitHub Actions"
@@ -84,6 +73,8 @@ jobs:
           git add README.md
           git commit -m "Add Cypress test badge"
           git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   Deploy_job:
     runs-on: ubuntu-latest
