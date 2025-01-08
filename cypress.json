@@ -1,4 +1,11 @@
 {
   "baseUrl": "http://localhost:3000",
-  "projectId": "rncg2z"
+  "projectId": "rncg2z",
+  "reporter": "mochawesome",
+  "reporterOptions": {
+    "reportDir": "cypress/results",
+    "overwrite": false,
+    "html": false,
+    "json": true
+  }
 }

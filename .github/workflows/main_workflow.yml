@@ -21,4 +21,29 @@ jobs:
         run: npm install  # Instala las dependencias del proyecto
 
       - name: Run linter
-        run: npm run lint || exit 1
+        run: npm run lint || exit 1  # Ejecuta el linter y detiene el flujo si hay errores
+
+  Cypress_job:
+    runs-on: ubuntu-latest  # Utilizamos Ubuntu para ejecutar el job
+    needs: Linter_job  # El job de Cypress se ejecutará después del job de Linter
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # Realiza el checkout del código fuente
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2  # Configura Node.js en el entorno
+        with:
+          node-version: '16'  # Utiliza la versión que prefieras
+
+      - name: Install dependencies
+        run: npm install  # Instala las dependencias del proyecto
+
+      - name: Run Cypress tests in headless mode
+        run: npm run cypress run || true  # Ejecuta los tests en modo headless y continúa aunque haya errores
+        continue-on-error: true  # Continúa incluso si los tests fallan
+
+      - name: Upload Cypress results as artifact
+        uses: actions/upload-artifact@v2  # Subir el archivo de resultados
+        with:
+          name: cypress-results  # Nombre del artefacto
+          path: cypress/results/*.json  # Ruta a los resultados de Cypress generados en formato JSON
