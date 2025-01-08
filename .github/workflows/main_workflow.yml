@@ -48,7 +48,7 @@ jobs:
           name: cypress-results  # Nombre del artefacto
           path: cypress/results/results.txt # Ruta al archivo de resultados
 
-    Add_badge_job:
+  Add_badge_job:
     runs-on: ubuntu-latest
     needs: Cypress_job  # Este job se ejecutará después del Cypress_job
     steps:
