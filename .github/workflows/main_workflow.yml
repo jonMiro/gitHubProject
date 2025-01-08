@@ -1,0 +1,24 @@
+name: main_workflow
+
+on:
+  push:
+    branches:
+      - main  # Este job se ejecutará cada vez que haya un push en la rama principal
+
+jobs:
+  Linter_job:
+    runs-on: ubuntu-latest  # Utilizamos Ubuntu para ejecutar el job
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # Realiza el checkout del código fuente
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2  # Configura Node.js en el entorno
+        with:
+          node-version: '16'  # Utiliza la versión que prefieras
+
+      - name: Install dependencies
+        run: npm install  # Instala las dependencias del proyecto
+
+      - name: Run linter
+        run: npm run lint || exit 1
