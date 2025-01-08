@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v3  # Usamos la nueva versión (v3) de la acción para subir artefactos
         with:
           name: cypress-results  # Nombre del artefacto
-          path: results.txt  # Ruta al archivo de resultados
+          path: cypress/results/results.txt # Ruta al archivo de resultados
 
   Add_badge_job:
     runs-on: ubuntu-latest
