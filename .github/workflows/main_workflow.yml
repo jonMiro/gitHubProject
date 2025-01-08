@@ -63,14 +63,14 @@ jobs:
       - name: Read Cypress result
         id: cypress-result
         run: |
-          result=$(cat results.txt)
+          result=$(cat cypress/results/results.txt)
           echo "cypress_outcome=${result}" >> $GITHUB_ENV  # Guardamos el resultado como una variable de entorno
 
       - name: Commit changes to README
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add README.md
+          git add README.md cypress/results/results.txt  # Agregar README.md y results.txt
           git commit -m "Add Cypress test badge"
           git push
         env:
