@@ -75,6 +75,10 @@ jobs:
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check if results.txt exists and its contents
+        run: |
+          ls -la cypress/results
+          cat cypress/results/results.txt
 
   Deploy_job:
     runs-on: ubuntu-latest
