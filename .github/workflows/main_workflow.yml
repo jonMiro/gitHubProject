@@ -84,6 +84,7 @@ jobs:
           git add README.md
           git commit -m "Add Cypress test badge"
           git push
+
   Deploy_job:
     runs-on: ubuntu-latest
     needs: Cypress_job  # Este job se ejecutará después del Cypress_job
@@ -98,3 +99,60 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}  # ID de la organización en Vercel (si aplica)
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}  # ID del proyecto en Vercel
           vercel-args: '--prod'  # Desplegar en producción (puedes cambiarlo a '--preview' si prefieres)
+
+  Notification_job:
+    runs-on: ubuntu-latest
+    needs: [Linter_job, Cypress_job, Add_badge_job, Deploy_job]  # Asegurarse de que se ejecute después de los jobs anteriores
+    if: always()  # Esto garantiza que el job se ejecute siempre
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Send notification email
+        run: |
+          # Obtener los resultados de los trabajos anteriores
+          result_linter="${{ job.status }}"
+          result_cypress="${{ needs.Cypress_job.result }}"
+          result_add_badge="${{ needs.Add_badge_job.result }}"
+          result_deploy="${{ needs.Deploy_job.result }}"
+
+          # Crear el mensaje del correo
+          subject="Resultado del workflow ejecutado"
+          body="S'ha realitzat un push en la branca main que ha provocat l'execució del workflow nom_repositori_workflow amb els següents resultats:
+
+          - linter_job: $result_linter
+          - cypress_job: $result_cypress
+          - add_badge_job: $result_add_badge
+          - deploy_job: $result_deploy"
+
+          # Usar Node.js para enviar el correo
+          node -e "
+          const nodemailer = require('nodemailer');
+          const transporter = nodemailer.createTransport({
+            service: 'gmail',  # Usar el servicio de correo adecuado
+            auth: {
+              user: '${{ secrets.USER_EMAIL }}',
+              pass: '${{ secrets.EMAIL_PASSWORD }}',  # La contraseña se debe proporcionar como secreto
+            }
+          });
+
+          const mailOptions = {
+            from: '${{ secrets.USER_EMAIL }}',
+            to: '${{ secrets.USER_EMAIL }}',  # El correo que recibirás
+            subject: '$subject',
+            text: '$body',  # Mensaje del correo
+          };
+
+          transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              console.log('Error:', error);
+            } else {
+              console.log('Email sent: ' + info.response);
+            }
+          });
+          "
