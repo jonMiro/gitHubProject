@@ -38,12 +38,12 @@ jobs:
       - name: Install dependencies
         run: npm install  # Instala las dependencias del proyecto
 
-      - name: Run Cypress tests in headless mode
-        run: npm run cypress run || true  # Ejecuta los tests en modo headless y continúa aunque haya errores
+      - name: Run Cypress tests
+        run: npm run cypress || true  # Ejecuta los tests de Cypress y continúa aunque haya errores
         continue-on-error: true  # Continúa incluso si los tests fallan
 
       - name: Upload Cypress results as artifact
-        uses: actions/upload-artifact@v2  # Subir el archivo de resultados
+        uses: actions/upload-artifact@v3  # Usamos la nueva versión (v3) de la acción para subir artefactos
         with:
           name: cypress-results  # Nombre del artefacto
-          path: cypress/results/*.json  # Ruta a los resultados de Cypress generados en formato JSON
+          path: results.txt  # Ruta al archivo de resultados
